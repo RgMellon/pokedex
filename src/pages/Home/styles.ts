@@ -1,4 +1,38 @@
 import styled from 'styled-components/native';
+import { FlatList } from 'react-native';
+import { Pokemon } from './index';
+
+const colors = {
+  grass: '#62B957',
+  fire: '#FD7D24',
+  water: '#4A90DA',
+  poison: '#A552CC',
+  normal: '#9DA0AA',
+  bug: '#8CB330',
+  flying: '#748FC9',
+  eletric: '#F2CB55',
+  ground: '#F78551',
+};
+
+const backgroundColors = {
+  grass: '#8BBE8A',
+  fire: '#FFA756',
+  water: '#58ABF6',
+  poison: '#9F6E97',
+  normal: '#B5B9C4',
+  bug: '#8BD674',
+  flying: '#748FC9',
+  eletric: '#F2CB55',
+  ground: '#F78551',
+};
+
+interface PokemonTypeProps {
+  type: string;
+}
+
+interface PokemonCardProps {
+  type: string;
+}
 
 export const Container = styled.View`
   background: #fff;
@@ -21,9 +55,13 @@ export const Title = styled.Text`
   margin-top: -70px;
 `;
 
-export const PokemonCard = styled.View`
-  height: 115px;
-  background: #8bbe8a;
+export const PokemonList = styled(FlatList as new () => FlatList<Pokemon>)`
+  margin-top: 10px;
+`;
+
+export const PokemonCard = styled.View<PokemonCardProps>`
+  /* height: 115px; */
+  background: ${props => backgroundColors[props.type]};
   border-radius: 10px;
   margin-top: 30px;
 
@@ -56,12 +94,12 @@ export const PokemonContentType = styled.View`
   flex-direction: row;
 `;
 
-export const PokemonType = styled.View`
+export const PokemonType = styled.View<PokemonTypeProps>`
   padding: 5px;
   width: 65px;
   height: 25px;
 
-  background: #a552cc;
+  background: ${props => colors[props.type]};
   border-radius: 3px;
   margin-left: 5px;
   margin-top: 5px;
@@ -95,7 +133,7 @@ export const PokemonId = styled.Text`
 export const PokemonName = styled.Text`
   font-style: normal;
   font-weight: bold;
-  font-size: 26px;
+  font-size: 25px;
   line-height: 31px;
   margin-top: 5px;
   /* identical to box height */

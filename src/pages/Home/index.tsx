@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
+import { ScrollView } from 'react-native';
 import pokeballImage from '../../assets/img/pokeball.png';
 import pokeballCard from '../../assets/img/pokeballCard.png';
 import dots from '../../assets/img/dots.png';
+
+import api from '../../services/api';
 
 import {
   Header,
   Container,
   Title,
+  PokemonList,
   PokemonCard,
   LeftSide,
   RightSide,
@@ -21,40 +25,99 @@ import {
   PokemonTypeText,
 } from './styles';
 
+interface PokemonType {
+  type: {
+    name: string;
+  };
+}
+
+export interface Pokemon {
+  name: string;
+  url: string;
+  id: number;
+  types: PokemonType[];
+}
+
+export interface RequestPokemon {
+  id: number;
+  types: PokemonType[];
+}
+
 const Home: React.FC = () => {
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+
+  const getPokemonInfo = useCallback(async (url: string): Promise<
+    RequestPokemon
+  > => {
+    const response = await api.get(url);
+
+    const { id, types } = response.data as RequestPokemon;
+
+    return { id, types };
+  }, []);
+
+  useEffect(() => {
+    async function getPokemons(): Promise<void> {
+      const response = await api.get('/pokemon');
+      const { results } = response.data;
+
+      const payloadPokemons = await Promise.all(
+        results.map(async (pokemon: Pokemon) => {
+          const { id, types } = await getPokemonInfo(pokemon.url);
+
+          return {
+            name: pokemon.name,
+            id,
+            types,
+          };
+        }),
+      );
+
+      setPokemons(payloadPokemons as Pokemon[]);
+    }
+
+    getPokemons();
+  }, [getPokemonInfo]);
+
   return (
-    <>
+    <ScrollView>
       <Header source={pokeballImage} />
+
       <Container>
         <Title> Pokédex</Title>
+        <PokemonList
+          // ListHeaderComponent={<Title> Pokédex</Title>}
+          data={pokemons}
+          keyExtractor={pokemon => pokemon.name}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item: pokemon }) => (
+            <PokemonCard type={pokemon.types[0].type.name}>
+              <LeftSide>
+                <PokemonId>#{pokemon.id}</PokemonId>
+                <PokemonName>{pokemon.name}</PokemonName>
+                <ImageCardDetailLeftSide source={dots} />
+                <PokemonContentType>
+                  {pokemon.types.map(pokemonType => (
+                    <PokemonType key={pokemon.id} type={pokemonType.type.name}>
+                      <PokemonTypeText>{pokemonType.type.name}</PokemonTypeText>
+                    </PokemonType>
+                  ))}
+                </PokemonContentType>
+              </LeftSide>
 
-        <PokemonCard>
-          <LeftSide>
-            <PokemonId> #001 </PokemonId>
-            <PokemonName> Bulbasaur </PokemonName>
-            <ImageCardDetailLeftSide source={dots} />
-            <PokemonContentType>
-              <PokemonType>
-                <PokemonTypeText> Grass </PokemonTypeText>
-              </PokemonType>
-              <PokemonType>
-                <PokemonTypeText> Poison </PokemonTypeText>
-              </PokemonType>
-            </PokemonContentType>
-          </LeftSide>
-
-          <RightSide>
-            <PokeballCardDetail source={pokeballCard} />
-            <PokemonImage
-              source={{
-                uri:
-                  'https://s3-alpha-sig.figma.com/img/1602/6709/801774675169a8fc7e67d627e657fab4?Expires=1597017600&Signature=F9iffnzYxzvv-HMq6-3CNLZWN0KxHMuBDXRHA7jQxaM8rRFhSfqPg88EisWBeipiN1Mugid3BSsdZ2guqdxxEeGZ2v8Es7m9IxbBeQrwlIWDUXJIj5OKf1zGj5vpPOOKBVnxN6UJWYR3X8ezoysgblAYdbpAafIIaJZemO-GatIJMXIA2GoQ0lRM8bqFpnXiXFhlwk0lgkFmY70hh8gdo5uSaK0WcRHj3BEQTpHD-iJdsHjUJKMfJzMqjFD65ifgsNX-8ukSBhBOzf3de1i2YZ4iKcaxOi3Jd2JD8lBCS8BbRRrQIOaqBwOXwmdUbXccY83ee23cowlxz6yODi37vg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA',
-              }}
-            />
-          </RightSide>
-        </PokemonCard>
+              <RightSide>
+                <PokeballCardDetail source={pokeballCard} />
+                <PokemonImage
+                  source={{
+                    uri: `https://pokeres.bastionbot.org/images/pokemon/${pokemon.id}.png`,
+                  }}
+                />
+              </RightSide>
+            </PokemonCard>
+          )}
+        />
       </Container>
-    </>
+    </ScrollView>
   );
 };
 
