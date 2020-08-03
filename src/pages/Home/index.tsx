@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-import { ScrollView } from 'react-native';
+import { ScrollView, ActivityIndicator } from 'react-native';
 import pokeballImage from '../../assets/img/pokeball.png';
 import pokeballCard from '../../assets/img/pokeballCard.png';
 import dots from '../../assets/img/dots.png';
@@ -9,6 +9,7 @@ import dots from '../../assets/img/dots.png';
 import api from '../../services/api';
 
 import {
+  LoadingScreen,
   Header,
   Container,
   Title,
@@ -45,6 +46,7 @@ export interface RequestPokemon {
 }
 
 const Home: React.FC = () => {
+  const [load, setLoad] = useState<boolean>(true);
   const { navigate } = useNavigation();
 
   const navigateToAbout = useCallback(
@@ -86,12 +88,17 @@ const Home: React.FC = () => {
       );
 
       setPokemons(payloadPokemons as Pokemon[]);
+      setLoad(false);
     }
 
     getPokemons();
   }, [getPokemonInfo]);
 
-  return (
+  return load ? (
+    <LoadingScreen>
+      <ActivityIndicator size="large" color="#d6d6d6" />
+    </LoadingScreen>
+  ) : (
     <ScrollView>
       <Header source={pokeballImage} />
 

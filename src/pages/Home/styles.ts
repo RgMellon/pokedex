@@ -13,6 +13,11 @@ interface PokemonCardProps {
   type: string;
 }
 
+export const LoadingScreen = styled.View`
+  flex: 1;
+  justify-content: center;
+`;
+
 export const Container = styled.View`
   background: #fff;
   padding: 40px;

@@ -9,7 +9,7 @@
 - [Como baixar o projeto](#-como-baixar-o-projeto)
 - [Preview do projeto](#-preview-do-projeto)
 - [Funcionalidades](#-Funcionalidades)
-- [Backend](#Backend)
+- [Download](#-Download)
 
 ---
 
@@ -87,3 +87,9 @@ O projeto foi feito utilizando das seguines tecnologias
 - Listar Habilidades
 
 Desenvolvido com ♥ por Renan Melo
+
+## ⬇ Download
+
+Segue o link para download do APK (android)
+
+[Download apk](https://drive.google.com/file/d/12oHH87HEeXMt4xiCYoDhM7X9QmWQjBiB/view?usp=sharing)
