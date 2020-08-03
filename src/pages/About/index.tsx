@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ScrollView, ActivityIndicator } from 'react-native';
-import * as Progress from 'react-native-progress';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import api from '../../services/api';
 import backgroundColor from '../../config/backgroundColor.json';
 
@@ -26,6 +27,7 @@ import {
   ContentBar,
   Ability,
   ProgressBar,
+  BackButton,
 } from './styles';
 
 import circle from '../../assets/img/circle.png';
@@ -59,13 +61,23 @@ interface IPokemon {
   color: string;
 }
 
+interface RouteParams {
+  pokemonId: number;
+}
+
 const About: React.FC = () => {
+  const route = useRoute();
+  const { pokemonId } = route.params as RouteParams;
+  const { goBack } = useNavigation();
+
   const [pokemon, setPokemon] = useState({} as IPokemon);
   const [load, setLoad] = useState<boolean>(true);
 
   useEffect(() => {
     async function getPokemon(): Promise<void> {
-      const response = await api.get('https://pokeapi.co/api/v2/pokemon/6/');
+      const response = await api.get(
+        `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`,
+      );
 
       const { stats, abilities, id, name, types } = response.data;
 
@@ -84,7 +96,11 @@ const About: React.FC = () => {
     }
 
     getPokemon();
-  }, []);
+  }, [pokemonId]);
+
+  const navigateBack = useCallback(() => {
+    goBack();
+  }, [goBack]);
 
   return load ? (
     <LoadingScreen>
@@ -93,6 +109,10 @@ const About: React.FC = () => {
   ) : (
     <ScrollView style={{ flex: 1 }}>
       <Header type={pokemon.types[0].type.name}>
+        <BackButton onPress={navigateBack}>
+          <FeatherIcon name="chevron-left" size={24} color="#fff" />
+        </BackButton>
+
         <ContentImage>
           <CircleImage source={circle} />
           <PokemonImage

@@ -175,3 +175,9 @@ export const Ability = styled.Text`
 `;
 
 export const ProgressBar = styled(Progress.Bar).attrs({})<TypeProps>``;
+
+export const BackButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 70;
+  left: 40px;
+`;

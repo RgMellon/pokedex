@@ -2,29 +2,8 @@ import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 import { Pokemon } from './index';
 
-const colors = {
-  grass: '#62B957',
-  fire: '#FD7D24',
-  water: '#4A90DA',
-  poison: '#A552CC',
-  normal: '#9DA0AA',
-  bug: '#8CB330',
-  flying: '#748FC9',
-  eletric: '#F2CB55',
-  ground: '#F78551',
-};
-
-const backgroundColors = {
-  grass: '#8BBE8A',
-  fire: '#FFA756',
-  water: '#58ABF6',
-  poison: '#9F6E97',
-  normal: '#B5B9C4',
-  bug: '#8BD674',
-  flying: '#748FC9',
-  eletric: '#F2CB55',
-  ground: '#F78551',
-};
+import backgroundColor from '../../config/backgroundColor.json';
+import colorType from '../../config/color.json';
 
 interface PokemonTypeProps {
   type: string;
@@ -59,9 +38,9 @@ export const PokemonList = styled(FlatList as new () => FlatList<Pokemon>)`
   margin-top: 10px;
 `;
 
-export const PokemonCard = styled.View<PokemonCardProps>`
+export const PokemonCard = styled.TouchableOpacity<PokemonCardProps>`
   /* height: 115px; */
-  background: ${props => backgroundColors[props.type]};
+  background: ${props => backgroundColor[props.type]};
   border-radius: 10px;
   margin-top: 30px;
 
@@ -99,7 +78,7 @@ export const PokemonType = styled.View<PokemonTypeProps>`
   width: 65px;
   height: 25px;
 
-  background: ${props => colors[props.type]};
+  background: ${props => colorType[props.type]};
   border-radius: 3px;
   margin-left: 5px;
   margin-top: 5px;

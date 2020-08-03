@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 import { ScrollView } from 'react-native';
 import pokeballImage from '../../assets/img/pokeball.png';
@@ -44,6 +45,17 @@ export interface RequestPokemon {
 }
 
 const Home: React.FC = () => {
+  const { navigate } = useNavigation();
+
+  const navigateToAbout = useCallback(
+    (pokemonId: number) => {
+      navigate('About', {
+        pokemonId,
+      });
+    },
+    [navigate],
+  );
+
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 
   const getPokemonInfo = useCallback(async (url: string): Promise<
@@ -86,12 +98,14 @@ const Home: React.FC = () => {
       <Container>
         <Title> Pokédex</Title>
         <PokemonList
-          // ListHeaderComponent={<Title> Pokédex</Title>}
           data={pokemons}
-          keyExtractor={pokemon => pokemon.name}
+          keyExtractor={pokemon => pokemon.id.toString()}
           showsVerticalScrollIndicator={false}
           renderItem={({ item: pokemon }) => (
-            <PokemonCard type={pokemon.types[0].type.name}>
+            <PokemonCard
+              type={pokemon.types[0].type.name}
+              onPress={() => navigateToAbout(pokemon.id)}
+            >
               <LeftSide>
                 <PokemonId>#{pokemon.id}</PokemonId>
                 <PokemonName>{pokemon.name}</PokemonName>
